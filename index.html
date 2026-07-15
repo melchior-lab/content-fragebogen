@@ -376,7 +376,19 @@ function setupMic(btn, ta, hint, i) {
     rec.continuous = false;
     rec.interimResults = true;
     let gotFinal = false;
+    // Arc, Brave & Co. haben keine Google-Speech-Keys: Aufnahme läuft, aber es
+    // kommt nie ein Ergebnis. Nach 7s ohne Resultat Hinweis zeigen.
+    if (!window._speechCheckTimer) {
+      window._speechCheckTimer = setTimeout(() => {
+        if (listening && !committed.trim() && !ta.value.trim()) {
+          hint.textContent = "Es kommt nichts an? Das Diktieren funktioniert nur in Google Chrome (nicht in Arc, Brave oder Firefox). Alternativ einfach tippen.";
+          hint.classList.add("recording");
+        }
+      }, 7000);
+    }
     rec.onresult = (e) => {
+      clearTimeout(window._speechCheckTimer);
+      window._speechCheckTimer = 1;
       let interim = "";
       for (let k = 0; k < e.results.length; k++) {
         const r = e.results[k];
