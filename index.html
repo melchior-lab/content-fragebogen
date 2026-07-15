@@ -350,17 +350,18 @@
       <div class="count-row" id="countRow"></div>
       <button class="summary-toggle" id="summaryToggle" type="button">Zusammenfassung ansehen</button>
       <div class="summary-box" id="summaryBox"></div>
-      <p>Kopier deine Antworten mit einem Klick und schick sie mir einfach per WhatsApp.</p>
+      <p>Ein Klick, und deine Antworten landen direkt bei mir.</p>
       <div class="btn-row">
-        <button class="btn btn-primary" id="copyBtn">Antworten kopieren</button>
+        <button class="btn btn-primary" id="sendBtn">Antworten absenden</button>
+        <button class="btn btn-secondary" id="copyBtn">Nur kopieren</button>
       </div>
     </div>
     <div class="thanks" id="thanksScreen">
       <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
-      <h2>Fertig, alles kopiert!</h2>
-      <p>Jetzt nur noch in WhatsApp einfügen und an Melchior schicken. Danke dir!</p>
+      <h2 id="thanksTitle">Angekommen!</h2>
+      <p id="thanksText">Deine Antworten sind bei Melchior gelandet. Danke dir!</p>
       <div class="btn-row">
-        <button class="btn btn-secondary" id="copyAgain">Nochmal kopieren</button>
+        <button class="btn btn-secondary" id="copyAgain">Antworten zusätzlich kopieren</button>
       </div>
     </div>
     <div class="autosave-note">Deine Eingaben werden automatisch in deinem Browser gespeichert.</div>
@@ -426,8 +427,8 @@ const TOPICS = [
   }
 ];
 
-// Formspree: ID eintragen (z.B. "xkndqwer"), dann geht der Versand direkt per Mail an Melchior.
-const FORMSPREE_ID = "";
+// Formspree: Versand geht direkt per Mail an Melchior.
+const FORMSPREE_ID = "mykrkzgk";
 
 const STORAGE_KEY = "fragebogen-carl-v1";
 const container = document.getElementById("topics");
@@ -661,30 +662,46 @@ document.getElementById("summaryToggle").addEventListener("click", () => {
   }
 });
 
-async function copyAnswers() {
-  await navigator.clipboard.writeText(buildSummary());
-  // Optional: Direkt-Versand via Formspree, wenn konfiguriert
-  if (FORMSPREE_ID) {
-    try {
-      await fetch("https://formspree.io/f/" + FORMSPREE_ID, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Accept": "application/json" },
-        body: JSON.stringify({ feedback: buildSummary() })
-      });
-    } catch(e) {}
+function showThanks(sent) {
+  if (!sent) {
+    document.getElementById("thanksTitle").textContent = "Fertig, alles kopiert!";
+    document.getElementById("thanksText").textContent = "Jetzt nur noch in WhatsApp einfügen und an Melchior schicken. Danke dir!";
   }
   document.getElementById("submitMain").style.display = "none";
   document.getElementById("thanksScreen").classList.add("show");
   if (navigator.vibrate) navigator.vibrate([15, 60, 15]);
 }
 
+document.getElementById("sendBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.textContent = "Wird gesendet...";
+  try {
+    const res = await fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ feedback: buildSummary() })
+    });
+    if (!res.ok) throw new Error("send failed");
+    showThanks(true);
+  } catch(e) {
+    // Fallback: kopieren und per WhatsApp schicken lassen
+    btn.disabled = false;
+    btn.textContent = "Antworten absenden";
+    try { await navigator.clipboard.writeText(buildSummary()); } catch(err) {}
+    toast("Senden hat nicht geklappt. Antworten sind kopiert: schick sie per WhatsApp.");
+  }
+});
+
 document.getElementById("copyBtn").addEventListener("click", async () => {
   if (!checkOpen()) return;
-  await copyAnswers();
+  await navigator.clipboard.writeText(buildSummary());
+  showThanks(false);
 });
 document.getElementById("copyAgain").addEventListener("click", async () => {
   await navigator.clipboard.writeText(buildSummary());
-  toast("Nochmal kopiert");
+  toast("Kopiert");
 });
 </script>
 </body>
