@@ -497,7 +497,6 @@ TOPICS.forEach((t, i) => {
 
   btns.forEach(b => b.addEventListener("click", () => {
     const c = b.dataset.c;
-    const wasUnset = !state[i].choice;
     state[i].choice = state[i].choice === c ? null : c;
     render();
     updateProgress();
@@ -505,14 +504,6 @@ TOPICS.forEach((t, i) => {
     if (state[i].choice) {
       b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
       if (navigator.vibrate) navigator.vibrate(12);
-      // Auto-Scroll zum nächsten offenen Thema (nur bei Neubewertung)
-      if (wasUnset) {
-        const next = state.findIndex((s, k) => k > i && !s.choice);
-        setTimeout(() => {
-          if (next !== -1) cardRefs[next].scrollIntoView({ block: "start" });
-          else document.getElementById("submitSection").scrollIntoView({ block: "start" });
-        }, 350);
-      }
     }
   }));
 
