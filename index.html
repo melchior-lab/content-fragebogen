@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content-Themen · Carl Mally × Melchior Sorg</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e6e6e3;
+    --border-strong: #d4d4d0;
+    --text: #1a1a18;
+    --text-soft: #6b6b66;
+    --text-faint: #9c9c96;
+    --accent: #0a5c36;
+    --accent-soft: #e8f3ed;
+    --red: #b3362b;
+    --red-soft: #faeceb;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(250,250,250,.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 720px; margin: 0 auto;
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+  .brand { font-weight: 650; font-size: 15px; letter-spacing: -0.01em; }
+  .brand span { color: var(--text-faint); font-weight: 450; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-label { font-size: 13px; color: var(--text-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .progress-track {
+    width: 120px; height: 5px; border-radius: 99px;
+    background: var(--border); overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 720px; margin: 0 auto; padding: 56px 24px 120px; }
+
+  .intro { margin-bottom: 48px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 99px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .intro p { color: var(--text-soft); font-size: 16.5px; max-width: 560px; }
+  .intro p + p { margin-top: 10px; }
+  .intro strong { color: var(--text); font-weight: 600; }
+
+  /* ---------- Topic Card ---------- */
+  .topic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+  }
+  .topic.done { border-color: var(--border-strong); }
+  .topic-num {
+    font-size: 12.5px; font-weight: 600; color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+  }
+  .topic h2 { font-size: 19px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 8px; }
+  .topic .pitch { color: var(--text-soft); font-size: 15.5px; margin-bottom: 20px; }
+
+  .choice { display: flex; gap: 8px; margin-bottom: 14px; }
+  .choice button {
+    flex: 1;
+    font: inherit; font-size: 14.5px; font-weight: 550;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all .15s;
+  }
+  .choice button:hover { border-color: var(--text-faint); color: var(--text); }
+  .choice button.sel-yes {
+    background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
+  }
+  .choice button.sel-no {
+    background: var(--red-soft); border-color: var(--red); color: var(--red);
+  }
+
+  .answer-wrap { position: relative; }
+  textarea {
+    width: 100%;
+    font: inherit; font-size: 15px;
+    padding: 12px 52px 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    min-height: 76px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--card); }
+  textarea::placeholder { color: var(--text-faint); }
+
+  .mic {
+    position: absolute; right: 10px; top: 10px;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .mic:hover { border-color: var(--text-faint); }
+  .mic svg { width: 16px; height: 16px; fill: var(--text-soft); }
+  .mic.rec { background: var(--red); border-color: var(--red); animation: pulse 1.4s ease-in-out infinite; }
+  .mic.rec svg { fill: #fff; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(179,54,43,.35); }
+    50% { box-shadow: 0 0 0 7px rgba(179,54,43,0); }
+  }
+  .mic-hint { font-size: 12.5px; color: var(--text-faint); margin-top: 8px; }
+  .mic-hint.recording { color: var(--red); font-weight: 550; }
+
+  /* ---------- Submit ---------- */
+  .submit-section {
+    margin-top: 48px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .submit-section h2 { font-size: 20px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 8px; }
+  .submit-section p { color: var(--text-soft); font-size: 15px; margin-bottom: 22px; }
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none; cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #084a2c; }
+  .btn-secondary {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover { border-color: var(--text-faint); }
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: #fff;
+    font-size: 14px; font-weight: 550;
+    padding: 11px 20px; border-radius: 99px;
+    opacity: 0; transition: all .3s cubic-bezier(.4,0,.2,1);
+    pointer-events: none; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  footer {
+    text-align: center; padding: 32px 24px 48px;
+    font-size: 13px; color: var(--text-faint);
+  }
+
+  @media (max-width: 540px) {
+    main { padding: 36px 16px 100px; }
+    .topic { padding: 20px 18px; }
+    h1 { font-size: 26px; }
+    .progress-track { width: 72px; }
+    .choice { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">Melchior Sorg <span>· Content-Planung</span></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 13</div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <div class="eyebrow">Für Carl</div>
+    <h1>13 neue Content-Themen für dein LinkedIn</h1>
+    <p>Ich hab neue Themen für die nächsten Wochen vorbereitet. Zu jedem brauche ich nur zwei Dinge von dir: <strong>Passt es oder passt es nicht</strong>, und wenn dir eine eigene Situation oder Story dazu einfällt, schreib sie kurz rein oder <strong>diktier sie über das Mikrofon-Symbol</strong>.</p>
+    <p>Stichpunkte reichen völlig. Den Rest mache ich.</p>
+  </div>
+
+  <div id="topics"></div>
+
+  <div class="submit-section">
+    <h2>Fertig?</h2>
+    <p>Kopier deine Antworten mit einem Klick und schick sie mir einfach per WhatsApp.</p>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="copyBtn">Antworten kopieren</button>
+    </div>
+  </div>
+</main>
+
+<footer>Melchior Sorg · LinkedIn Authority Engine</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const TOPICS = [
+  {
+    title: "Kunde ghostet nach dem Pitch",
+    pitch: "Ihr habt ein starkes Angebot rausgeschickt, der Kunde war begeistert. Dann: Funkstille. Kein Nein, kein Ja, einfach nichts. Jeder Dienstleister kennt das, kaum einer spricht drüber."
+  },
+  {
+    title: "„Mach es irgendwie... poppiger“",
+    pitch: "Feedback, mit dem niemand arbeiten kann: poppiger, frischer, moderner. Und wenn man nachfragt, kommt: „Ich weiß es, wenn ich es sehe.“ Wie ihr aus schwammigem Feedback trotzdem ein klares Briefing macht."
+  },
+  {
+    title: "Scope Creep in Zeitlupe",
+    pitch: "Erst ist es nur ein Logo. Dann noch schnell eine Visitenkarte. Dann die Website-Texte, „weil ihr ja eh schon drin seid“. Aus einem kleinen Projekt wird unbezahlt ein großes. Wie ihr damit umgeht."
+  },
+  {
+    title: "Der günstigste Anbieter gewinnt. Und ruft dann an.",
+    pitch: "Ein Prospect entscheidet sich für den Billiganbieter. Drei Monate später meldet er sich wieder: „Könnt ihr das retten?“ Die Story, die zeigt, warum billig am Ende doppelt kostet."
+  },
+  {
+    title: "Wochenlang nichts, dann alles sofort",
+    pitch: "Der Kunde antwortet drei Wochen nicht auf die Freigabe-Anfrage. Dann kommt die Mail: „Brauchen wir bis morgen.“ Warum die Deadline des Kunden nicht automatisch eure Deadline ist."
+  },
+  {
+    title: "Was Kunden sagen vs. was sie meinen",
+    pitch: "„Wir wollen mal was ganz Neues“ heißt oft: bloß nichts Neues. „Budget spielt keine Rolle“ heißt: Budget spielt die Hauptrolle. Ein Übersetzungs-Post aus 10+ Jahren Kundenerfahrung."
+  },
+  {
+    title: "Wenn ChatGPT dein Mitbewerber ist",
+    pitch: "Kunden sagen heute: „Das Logo kann ich mir doch auch von KI machen lassen.“ Stimmt. Und trotzdem buchen sie am Ende euch. Warum, und wofür Kunden 2026 wirklich eine Agentur bezahlen."
+  },
+  {
+    title: "Wenn der Kunde der Experte ist",
+    pitch: "Der Kunde schickt einen eigenen Logo-Entwurf mit: „Meine Nichte hat da schon mal was gemacht.“ Wie ihr wertschätzend bleibt und trotzdem die fachliche Führung behaltet."
+  },
+  {
+    title: "Umsatz +40%, Budget -50%",
+    pitch: "Der Kunde hat dank eurer Arbeit sein bestes Jahr. Und kürzt als Erstes das Marketing-Budget. Die absurde Logik dahinter, und was das über die Wahrnehmung von Marketing sagt."
+  },
+  {
+    title: "Freitag-Anfrage, Montag-Nachhaken",
+    pitch: "Freitag 17:43 Uhr kommt die Anfrage. Montag 8:12 Uhr die Nachfrage, warum noch keine Antwort da ist. Ein Post über Erreichbarkeits-Erwartungen und gesunde Grenzen als Dienstleister."
+  },
+  {
+    title: "Der Endlos-Revisions-Loop",
+    pitch: "Korrekturschleife 7. Der Entwurf sieht inzwischen fast wieder aus wie Version 1. Warum zu viele Feedback-Runden das Ergebnis schlechter machen, nicht besser."
+  },
+  {
+    title: "Wenn der Ansprechpartner wechselt",
+    pitch: "Zwei Jahre super Zusammenarbeit. Dann wechselt euer Ansprechpartner die Firma, und der Nachfolger will „erstmal alles auf den Prüfstand stellen“. Wie ihr die Beziehung neu aufbaut, bevor der Vertrag kippt."
+  },
+  {
+    title: "Der Konkurrent als Benchmark, mit doppeltem Budget",
+    pitch: "„Warum sieht unser Auftritt nicht aus wie bei Firma X?“ Firma X hat das dreifache Budget und ein eigenes Marketing-Team. Wie ihr Erwartungen ehrlich einordnet, ohne den Kunden zu verlieren."
+  }
+];
+
+const container = document.getElementById("topics");
+const state = TOPICS.map(() => ({ choice: null, note: "" }));
+
+TOPICS.forEach((t, i) => {
+  const el = document.createElement("div");
+  el.className = "topic";
+  el.innerHTML = `
+    <div class="topic-num">${String(i+1).padStart(2,"0")} / ${TOPICS.length}</div>
+    <h2>${t.title}</h2>
+    <p class="pitch">${t.pitch}</p>
+    <div class="choice">
+      <button data-c="yes">Passt, können wir machen</button>
+      <button data-c="no">Passt nicht</button>
+    </div>
+    <div class="answer-wrap">
+      <textarea placeholder="Deine Situation oder Story dazu (optional, Stichpunkte reichen)"></textarea>
+      <button class="mic" title="Antwort diktieren" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>
+      </button>
+    </div>
+    <div class="mic-hint"></div>
+  `;
+  container.appendChild(el);
+
+  const btns = el.querySelectorAll(".choice button");
+  btns.forEach(b => b.addEventListener("click", () => {
+    const c = b.dataset.c;
+    state[i].choice = state[i].choice === c ? null : c;
+    btns.forEach(x => x.classList.remove("sel-yes","sel-no"));
+    if (state[i].choice === "yes") b.classList.add("sel-yes");
+    if (state[i].choice === "no") b.classList.add("sel-no");
+    el.classList.toggle("done", !!state[i].choice);
+    updateProgress();
+  }));
+
+  const ta = el.querySelector("textarea");
+  ta.addEventListener("input", () => state[i].note = ta.value);
+
+  setupMic(el.querySelector(".mic"), ta, el.querySelector(".mic-hint"), i);
+});
+
+function updateProgress() {
+  const done = state.filter(s => s.choice).length;
+  document.getElementById("progressFill").style.width = (done/TOPICS.length*100)+"%";
+  document.getElementById("progressLabel").textContent = done+" / "+TOPICS.length;
+}
+
+/* ---------- Diktierfunktion (Web Speech API) ---------- */
+let activeRec = null;
+function setupMic(btn, ta, hint, i) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    btn.addEventListener("click", () => {
+      hint.textContent = "Diktieren wird von diesem Browser nicht unterstützt. Am besten Chrome nutzen, oder einfach tippen.";
+    });
+    return;
+  }
+  let rec = null;
+  let baseText = "";
+  btn.addEventListener("click", () => {
+    if (rec) { rec.stop(); return; }
+    if (activeRec) activeRec.stop();
+    rec = new SR();
+    activeRec = rec;
+    rec.lang = "de-DE";
+    rec.continuous = true;
+    rec.interimResults = true;
+    baseText = ta.value ? ta.value.trim() + " " : "";
+    btn.classList.add("rec");
+    hint.textContent = "Aufnahme läuft... zum Beenden nochmal aufs Mikrofon tippen.";
+    hint.classList.add("recording");
+    rec.onresult = (e) => {
+      let txt = "";
+      for (const r of e.results) txt += r[0].transcript;
+      ta.value = baseText + txt;
+      state[i].note = ta.value;
+    };
+    rec.onend = () => {
+      btn.classList.remove("rec");
+      hint.textContent = "";
+      hint.classList.remove("recording");
+      rec = null;
+      if (activeRec) activeRec = null;
+    };
+    rec.onerror = () => {
+      hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte Berechtigung erlauben oder tippen.";
+      hint.classList.remove("recording");
+    };
+    rec.start();
+  });
+}
+
+/* ---------- Absenden ---------- */
+function buildSummary() {
+  let out = "Content-Themen Feedback von Carl\n\n";
+  TOPICS.forEach((t, i) => {
+    const s = state[i];
+    const mark = s.choice === "yes" ? "PASST" : s.choice === "no" ? "PASST NICHT" : "OFFEN";
+    out += `${i+1}. ${t.title} [${mark}]`;
+    if (s.note.trim()) out += `\n   Carls Input: ${s.note.trim()}`;
+    out += "\n\n";
+  });
+  return out.trim();
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function checkOpen() {
+  const open = state.filter(s => !s.choice).length;
+  if (open > 0 && !confirm(`Du hast noch ${open} Thema/Themen ohne Bewertung. Trotzdem senden?`)) return false;
+  return true;
+}
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  await navigator.clipboard.writeText(buildSummary());
+  toast("Kopiert! Jetzt einfach per WhatsApp an Melchior schicken.");
+});
+</script>
+</body>
+</html>
