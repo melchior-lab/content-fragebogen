@@ -368,24 +368,31 @@ function setupMic(btn, ta, hint, i) {
 
   function startRec() {
     rec = new SR();
-    activeRec = { stop: () => { listening = false; try { rec.stop(); } catch(e){} } };
+    activeRec = { stop: () => { listening = false; try { rec.abort(); } catch(e){} } };
     rec.lang = "de-DE";
-    rec.continuous = true;
+    // Bewusst KEIN continuous-Modus: kurze Sessions + Neustart ist das
+    // zuverlässigste Muster (dictation.io-Ansatz), continuous ist in
+    // Chrome und Safari notorisch instabil.
+    rec.continuous = false;
     rec.interimResults = true;
+    let gotFinal = false;
     rec.onresult = (e) => {
       let interim = "";
-      for (let k = e.resultIndex; k < e.results.length; k++) {
+      for (let k = 0; k < e.results.length; k++) {
         const r = e.results[k];
-        if (r.isFinal) committed += r[0].transcript + " ";
+        if (r.isFinal) { committed += r[0].transcript.trim() + " "; gotFinal = true; }
         else interim += r[0].transcript;
       }
       ta.value = (committed + interim).trimStart();
       state[i].note = ta.value;
     };
     rec.onend = () => {
-      // Chrome stoppt nach kurzer Stille von selbst: neu starten, solange gewollt
+      ta.value = committed.trimStart();
+      state[i].note = ta.value;
       if (listening) {
-        try { rec.start(); return; } catch(e) { setTimeout(() => { if (listening) startRec(); }, 250); return; }
+        // Neustart mit Pause: sofortige Restarts werden von Chrome gedrosselt
+        setTimeout(() => { if (listening) startRec(); }, gotFinal ? 150 : 400);
+        return;
       }
       stopUI();
       rec = null;
@@ -397,9 +404,9 @@ function setupMic(btn, ta, hint, i) {
         stopUI();
         hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte Berechtigung im Browser erlauben oder tippen.";
       }
-      // andere Fehler (z.B. "no-speech") ignorieren, onend startet neu
+      // "no-speech" / "aborted" ignorieren, onend regelt den Neustart
     };
-    rec.start();
+    try { rec.start(); } catch(e) { /* schon gestartet, ignorieren */ }
   }
 
   btn.addEventListener("click", () => {
