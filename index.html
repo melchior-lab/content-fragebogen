@@ -335,6 +335,7 @@
     <div class="eyebrow">Für Carl</div>
     <h1>11 neue Content-Themen für dein LinkedIn</h1>
     <p>Ich hab neue Themen für die nächsten Wochen vorbereitet. Zu jedem brauche ich nur zwei Dinge von dir: <strong>Passt es oder passt es nicht</strong>, und wenn dir eine eigene Situation oder Story dazu einfällt, schreib sie kurz rein oder <strong>diktier sie über das Mikrofon-Symbol</strong> (am besten in Google Chrome öffnen).</p>
+    <p>Und wenn dich ein Thema an eine ganz andere Situation erinnert und dir dadurch ein neues Thema einfällt: schreib es einfach mit ins Textfeld darunter. Genau solche Ideen sind Gold wert.</p>
     <p>Stichpunkte reichen völlig. Den Rest mache ich.</p>
     <div class="meta-row">
       <span>⏱ Dauert ca. 5 Minuten</span>
@@ -343,6 +344,14 @@
   </div>
 
   <div id="topics"></div>
+
+  <div class="topic" id="extrasCard">
+    <div class="topic-num">Bonus</div>
+    <h2>Dir ist beim Durchgehen noch was eingefallen?</h2>
+    <p class="pitch">Wenn dich eines der Themen an eine eigene Situation erinnert hat, die hier noch fehlt: schreib sie einfach rein oder diktier sie. Jede Idee ist willkommen, auch halbfertig.</p>
+    <div id="extrasList"></div>
+    <button class="btn btn-secondary" id="addExtra" type="button" style="margin-top:4px; font-size:14px; padding:10px 18px;">+ Weiteres Thema hinzufügen</button>
+  </div>
 
   <div class="submit-section" id="submitSection">
     <div id="submitMain">
@@ -457,7 +466,7 @@ TOPICS.forEach((t, i) => {
       <button data-c="no" type="button">Passt nicht</button>
     </div>
     <div class="answer-wrap">
-      <textarea placeholder="Deine Situation oder Story dazu (optional, Stichpunkte reichen)"></textarea>
+      <textarea placeholder="Deine Situation oder Story dazu, oder ein neues Thema, das dir dabei einfällt (optional)"></textarea>
       <button class="mic" title="Antwort diktieren" type="button">
         <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>
       </button>
