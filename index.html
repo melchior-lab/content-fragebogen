@@ -357,37 +357,65 @@ function setupMic(btn, ta, hint, i) {
     return;
   }
   let rec = null;
-  let baseText = "";
-  btn.addEventListener("click", () => {
-    if (rec) { rec.stop(); return; }
-    if (activeRec) activeRec.stop();
+  let listening = false;   // gewollter Zustand (Button an/aus)
+  let committed = "";      // fest übernommener Text
+
+  function stopUI() {
+    btn.classList.remove("rec");
+    hint.textContent = "";
+    hint.classList.remove("recording");
+  }
+
+  function startRec() {
     rec = new SR();
-    activeRec = rec;
+    activeRec = { stop: () => { listening = false; try { rec.stop(); } catch(e){} } };
     rec.lang = "de-DE";
     rec.continuous = true;
     rec.interimResults = true;
-    baseText = ta.value ? ta.value.trim() + " " : "";
-    btn.classList.add("rec");
-    hint.textContent = "Aufnahme läuft... zum Beenden nochmal aufs Mikrofon tippen.";
-    hint.classList.add("recording");
     rec.onresult = (e) => {
-      let txt = "";
-      for (const r of e.results) txt += r[0].transcript;
-      ta.value = baseText + txt;
+      let interim = "";
+      for (let k = e.resultIndex; k < e.results.length; k++) {
+        const r = e.results[k];
+        if (r.isFinal) committed += r[0].transcript + " ";
+        else interim += r[0].transcript;
+      }
+      ta.value = (committed + interim).trimStart();
       state[i].note = ta.value;
     };
     rec.onend = () => {
-      btn.classList.remove("rec");
-      hint.textContent = "";
-      hint.classList.remove("recording");
+      // Chrome stoppt nach kurzer Stille von selbst: neu starten, solange gewollt
+      if (listening) {
+        try { rec.start(); return; } catch(e) { setTimeout(() => { if (listening) startRec(); }, 250); return; }
+      }
+      stopUI();
       rec = null;
-      if (activeRec) activeRec = null;
+      activeRec = null;
     };
-    rec.onerror = () => {
-      hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte Berechtigung erlauben oder tippen.";
-      hint.classList.remove("recording");
+    rec.onerror = (e) => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        listening = false;
+        stopUI();
+        hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte Berechtigung im Browser erlauben oder tippen.";
+      }
+      // andere Fehler (z.B. "no-speech") ignorieren, onend startet neu
     };
     rec.start();
+  }
+
+  btn.addEventListener("click", () => {
+    if (listening) {
+      listening = false;
+      try { rec && rec.stop(); } catch(e){}
+      stopUI();
+      return;
+    }
+    if (activeRec) activeRec.stop();
+    listening = true;
+    committed = ta.value ? ta.value.trim() + " " : "";
+    btn.classList.add("rec");
+    hint.textContent = "Aufnahme läuft... zum Beenden nochmal aufs Mikrofon tippen.";
+    hint.classList.add("recording");
+    startRec();
   });
 }
 
