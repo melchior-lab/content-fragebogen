@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onboarding-Fragebogen · Philip Stapmanns × Melchior Sorg</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e6e6e3;
+    --border-strong: #d4d4d0;
+    --text: #1a1a18;
+    --text-soft: #6b6b66;
+    --text-faint: #9c9c96;
+    --accent: #0a5c36;
+    --accent-soft: #e8f3ed;
+    --red: #b3362b;
+    --red-soft: #faeceb;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615;
+      --card: #1f1f1d;
+      --border: #2e2e2b;
+      --border-strong: #3d3d39;
+      --text: #f0f0ee;
+      --text-soft: #a3a39d;
+      --text-faint: #6e6e68;
+      --accent: #4fae7f;
+      --accent-soft: #1d3329;
+      --red: #d96a5f;
+      --red-soft: #3a2321;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 720px; margin: 0 auto;
+    padding: 12px 24px 10px;
+  }
+  .header-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 8px;
+  }
+  .brand { font-weight: 650; font-size: 15px; letter-spacing: -0.01em; }
+  .brand span { color: var(--text-faint); font-weight: 450; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-label { font-size: 13px; color: var(--text-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .progress-track {
+    width: 120px; height: 5px; border-radius: 99px;
+    background: var(--border); overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Sprungliste */
+  .jump-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .jump {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--text-soft);
+    font-size: 11.5px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .jump:hover { border-color: var(--text-faint); }
+  .jump.done-yes { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 120px; }
+
+  .intro { margin-bottom: 40px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 99px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .intro p { color: var(--text-soft); font-size: 16.5px; max-width: 560px; }
+  .intro p + p { margin-top: 10px; }
+  .intro strong { color: var(--text); font-weight: 600; }
+  .meta-row {
+    display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap;
+    font-size: 13.5px; color: var(--text-faint);
+  }
+  .meta-row span { display: flex; align-items: center; gap: 5px; }
+
+  /* ---------- Modul-Zwischentitel ---------- */
+  .module-head {
+    margin: 44px 0 16px;
+    display: flex; align-items: baseline; gap: 10px;
+  }
+  .module-head:first-child { margin-top: 0; }
+  .module-head .m-kicker {
+    font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .module-head .m-title {
+    font-size: 15px; font-weight: 600; color: var(--text);
+  }
+
+  /* ---------- Frage-Card ---------- */
+  .topic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+    scroll-margin-top: 92px;
+  }
+  .topic.done { border-color: var(--border-strong); }
+  .topic-num {
+    font-size: 12.5px; font-weight: 600; color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+  }
+  .topic h2 { font-size: 18px; font-weight: 650; letter-spacing: -0.01em; line-height: 1.4; margin-bottom: 16px; }
+
+  .answer-wrap { position: relative; }
+  textarea {
+    width: 100%;
+    font: inherit; font-size: 15px;
+    padding: 12px 52px 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    min-height: 84px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--card); }
+  textarea::placeholder { color: var(--text-faint); }
+
+  .mic {
+    position: absolute; right: 10px; top: 10px;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .mic:hover { border-color: var(--text-faint); }
+  .mic svg { width: 16px; height: 16px; fill: var(--text-soft); }
+  .mic.rec { background: var(--red); border-color: var(--red); animation: pulse 1.4s ease-in-out infinite; }
+  .mic.rec svg { fill: #fff; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(179,54,43,.35); }
+    50% { box-shadow: 0 0 0 7px rgba(179,54,43,0); }
+  }
+  .mic-hint { font-size: 12.5px; color: var(--text-faint); margin-top: 8px; }
+  .mic-hint.recording { color: var(--red); font-weight: 550; }
+
+  /* ---------- Submit / Zusammenfassung ---------- */
+  .submit-section {
+    margin-top: 48px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .submit-section h2 { font-size: 20px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 8px; }
+  .submit-section p { color: var(--text-soft); font-size: 15px; margin-bottom: 20px; }
+  .count-row {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .count-pill {
+    font-size: 13.5px; font-weight: 600;
+    padding: 5px 12px; border-radius: 99px;
+    font-variant-numeric: tabular-nums;
+  }
+  .count-pill.yes { background: var(--accent-soft); color: var(--accent); }
+  .count-pill.open { background: var(--border); color: var(--text-soft); }
+
+  .summary-box {
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+  }
+  .summary-box.open { display: block; }
+  .summary-toggle {
+    background: none; border: none; cursor: pointer;
+    font: inherit; font-size: 13.5px; font-weight: 550;
+    color: var(--accent);
+    margin-bottom: 18px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none; cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(.92); }
+  .btn-secondary {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover { border-color: var(--text-faint); }
+
+  /* Danke-Screen */
+  .thanks { display: none; }
+  .thanks.show { display: block; }
+  .thanks .check {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .thanks .check svg { width: 28px; height: 28px; stroke: var(--accent); stroke-width: 3; fill: none; }
+  .autosave-note {
+    font-size: 12.5px; color: var(--text-faint); margin-top: 16px;
+  }
+
+  footer {
+    text-align: center; padding: 32px 24px 48px;
+    font-size: 13px; color: var(--text-faint);
+  }
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: var(--bg);
+    font-size: 14px; font-weight: 550;
+    padding: 11px 20px; border-radius: 99px;
+    opacity: 0; transition: all .3s cubic-bezier(.4,0,.2,1);
+    pointer-events: none; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 540px) {
+    main { padding: 32px 16px 100px; }
+    .topic { padding: 20px 18px; scroll-margin-top: 110px; }
+    h1 { font-size: 26px; }
+    .progress-track { width: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="brand">Melchior Sorg <span>· Onboarding</span></div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">0 / 28</div>
+      </div>
+    </div>
+    <div class="jump-row" id="jumpRow"></div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <div class="eyebrow">Für Philip</div>
+    <h1>Dein Onboarding-Fragebogen</h1>
+    <p>Damit ich dein Profil, deine Zielgruppe und deinen Stil wirklich treffe, brauche ich einmal ein paar Infos von dir. Ohne die arbeite ich im Blindflug.</p>
+    <p>Bester Tipp: öffne die Seite in <strong>Google Chrome</strong> und sprich deine Antworten einfach über das <strong>Mikrofon-Symbol</strong> ein, statt zu tippen. Das geht schneller und ich höre direkt raus, wie du wirklich redest. Genau das ist für deinen Content Gold wert.</p>
+    <p>28 Fragen in 7 Modulen: Fundament, deine Story, Positionierung, Zielgruppe, Voice und Alltag, Zusammenarbeit, und dein Setup. Stichpunkte reichen völlig, den Rest mache ich.</p>
+    <div class="meta-row">
+      <span>⏱ Dauert ca. 12 Minuten</span>
+      <span>💾 Speichert automatisch, du kannst jederzeit unterbrechen</span>
+    </div>
+  </div>
+
+  <div id="topics"></div>
+
+  <div class="submit-section" id="submitSection">
+    <div id="submitMain">
+      <h2>Fertig?</h2>
+      <div class="count-row" id="countRow"></div>
+      <button class="summary-toggle" id="summaryToggle" type="button">Zusammenfassung ansehen</button>
+      <div class="summary-box" id="summaryBox"></div>
+      <p>Ein Klick, und deine Antworten landen direkt bei mir.</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="sendBtn">Antworten absenden</button>
+        <button class="btn btn-secondary" id="copyBtn">Nur kopieren</button>
+      </div>
+    </div>
+    <div class="thanks" id="thanksScreen">
+      <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
+      <h2 id="thanksTitle">Angekommen!</h2>
+      <p id="thanksText">Deine Antworten sind bei Melchior gelandet. Danke dir!</p>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="copyAgain">Antworten zusätzlich kopieren</button>
+      </div>
+    </div>
+    <div class="autosave-note">Deine Eingaben werden automatisch in deinem Browser gespeichert.</div>
+  </div>
+</main>
+
+<footer>Melchior Sorg · LinkedIn Authority Engine</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+// module: optionaler Zwischentitel, der VOR dieser Frage gerendert wird.
+const TOPICS = [
+  { module: ["Modul 1", "Fundament & Werte"], q: "Antrieb: Warum machst du das, was du machst? Was treibt dich wirklich an?" },
+  { q: "Identität: Welche 3 Werte lebst du in deinem Business täglich vor und wie würden deine engsten Freunde dich als Mensch beschreiben?" },
+
+  { module: ["Modul 2", "Hero Story & Hintergrund"], q: "Herkunft: Wie war dein Weg? Schule, Medizinstudium, Arztberuf an der Charité und parallel der Triathlon, hin zu Enduure. Wie kam das alles zusammen?" },
+  { q: "Wendepunkt: Wie hat sich deine Einstellung zu Arbeit, Ausdauersport und Coaching verändert, seit du Enduure aufbaust? Was hat dich am meisten überrascht?" },
+  { q: "Hürden: Was weißt du heute, was du dir am Anfang deines Weges gewünscht hättest zu wissen? Welche Erfahrungen haben dich am stärksten geprägt?" },
+
+  { module: ["Modul 3", "Positionierung & Markt-Sicht"], q: "Geheimwaffe: Was unterscheidet deinen Ansatz und deine Ergebnisse radikal von anderen in deinem Bereich?" },
+  { q: "Mitbewerber: Nenne Anbieter oder Accounts, die eine ähnliche Leistung anbieten wie du. Was machen die aus deiner Sicht goldrichtig oder komplett falsch?" },
+  { q: "Benchmark: Gibt es Coaches, Unternehmer oder Personal Brands, die du als Benchmark siehst oder einfach inspirierend findest?" },
+  { q: "Kante: Bei welchen Themen beziehst du klar Stellung und was regt dich in deiner Branche aktuell so richtig auf?" },
+
+  { module: ["Modul 4", "Zielgruppe & Proof"], q: "Zielgruppe konkret: Beschreib deinen typischen Wunschkunden als Mensch. Alter, Lebenssituation (Beruf, Familie, Zeit), Sport-Level (blutiger Einsteiger bis ambitionierter Age-Grouper) und was er sportlich erreichen will." },
+  { q: "Kunden-Realität: Welchen Satz sagt dein idealer Kunde frustriert vor der Zusammenarbeit und was sagt er voller Freude danach?" },
+  { q: "Erfolgsgeschichte: Auf welche Case-Study bist du besonders stolz? Gern mit groben Zahlen, Daten oder Ergebnissen. Und dürfen wir das auf LinkedIn teilen?" },
+  { q: "Vertrauen: Welche Logos, Kundennamen oder Resultate sollen wir als Social Proof prominent nutzen?" },
+  { q: "Netzwerk: Gibt es Personen, die dir kurzfristig eine Empfehlung auf LinkedIn schreiben würden?" },
+
+  { module: ["Modul 5", "Voice & Alltag"], q: "Grenzen: Wie persönlich darf dein Content werden? Was ist Off-Limits und welche Wörter oder Phrasen willst du niemals in deinen Posts lesen?" },
+  { q: "Alltag: Wie sieht ein typischer Arbeitstag bei dir aus (Rituale, Arbeitsweise)? Was gibt dir Energie?" },
+  { q: "Fotos: Hast du einen Link (Drive/Dropbox) mit Fotos von dir? Gern hier reinschreiben." },
+
+  { module: ["Modul 6", "Zusammenarbeit & Ziele"], q: "Erfolgs-Definition: Was muss in 90 Tagen passiert sein, damit du sagst: Das Projekt war ein voller Erfolg?" },
+  { q: "Themen: Welche 3-5 Unterthemen schweben dir für deinen Content vor?" },
+  { q: "Check-in: Welcher Wochentag und welche Uhrzeit (idealerweise freitags) passen dir verlässlich für einen kurzen Check-in? Gern drei Terminvorschläge." },
+  { q: "Kapazität: Wie viel Zeit kannst du pro Tag für Freigaben und pro Woche investieren? Und wie hast du es bisher gemacht?" },
+  { q: "Tages-Blocker: Wann in deinem Tagesablauf könntest du dir täglich einen festen Blocker von 45-60 Minuten setzen für Vernetzen und Outreach?" },
+
+  { module: ["Modul 7", "Dein Setup (Profil, Content, Outreach, Assets)"], q: "Farbschema: Soll dein LinkedIn-Profil sich am Enduure-Branding orientieren oder einen ganz eigenen Look bekommen?" },
+  { q: "Content-Erfahrung: Wie viel Erfahrung hast du im Schreiben von Posts?" },
+  { q: "Content-Workflow: Wie sieht dein aktueller Workflow beim Erstellen von Content, Kommentieren oder Outreach aus?" },
+  { q: "Outreach-Vorstellung: Hast du schon eine Idee, wie du auf LinkedIn aktiv auf potenzielle Kunden oder Partner zugehen möchtest? Was wäre dir dabei wichtig und was soll auf keinen Fall so klingen?" },
+  { q: "Assets: Hast du bestehende Guides, Checklisten oder Trainingspläne, die wir nutzen können?" },
+  { q: "Freebie-Thema: Welches Thema wäre perfekt für ein neues, kurzes Freebie (Conversion Asset)?" }
+];
+
+// Formspree: Versand geht direkt per Mail an Melchior.
+const FORMSPREE_ID = "mykrkzgk";
+
+const STORAGE_KEY = "fragebogen-philip-v1";
+const container = document.getElementById("topics");
+const jumpRow = document.getElementById("jumpRow");
+
+let state = TOPICS.map(() => ({ note: "" }));
+
+/* ---------- Autosave ---------- */
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (Array.isArray(saved) && saved.length === TOPICS.length) state = saved;
+  } catch(e) {}
+}
+loadState();
+
+const cardRefs = [];
+
+TOPICS.forEach((t, i) => {
+  // Modul-Zwischentitel vor der ersten Frage des Moduls
+  if (t.module) {
+    const head = document.createElement("div");
+    head.className = "module-head";
+    head.innerHTML = `<span class="m-kicker">${t.module[0]}</span><span class="m-title">${t.module[1]}</span>`;
+    container.appendChild(head);
+  }
+
+  const el = document.createElement("div");
+  el.className = "topic";
+  el.id = "topic-" + i;
+  el.innerHTML = `
+    <div class="topic-num">Frage ${i+1} / ${TOPICS.length}</div>
+    <h2>${t.q}</h2>
+    <div class="answer-wrap">
+      <textarea placeholder="Deine Antwort (tippen oder über das Mikrofon einsprechen)"></textarea>
+      <button class="mic" title="Antwort diktieren" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>
+      </button>
+    </div>
+    <div class="mic-hint"></div>
+  `;
+  container.appendChild(el);
+  cardRefs.push(el);
+
+  // Sprungliste
+  const jump = document.createElement("button");
+  jump.className = "jump";
+  jump.type = "button";
+  jump.textContent = i + 1;
+  jump.title = t.q;
+  jump.addEventListener("click", () => el.scrollIntoView({ block: "start" }));
+  jumpRow.appendChild(jump);
+
+  const ta = el.querySelector("textarea");
+
+  function render() {
+    const filled = !!state[i].note.trim();
+    el.classList.toggle("done", filled);
+    jump.classList.toggle("done-yes", filled);
+  }
+
+  ta.value = state[i].note || "";
+  ta.addEventListener("input", () => { state[i].note = ta.value; render(); updateProgress(); saveState(); });
+
+  setupMic(el.querySelector(".mic"), ta, el.querySelector(".mic-hint"), i, render);
+  render();
+});
+
+function updateProgress() {
+  const done = state.filter(s => s.note.trim()).length;
+  document.getElementById("progressFill").style.width = (done/TOPICS.length*100)+"%";
+  document.getElementById("progressLabel").textContent = done+" / "+TOPICS.length;
+  const open = TOPICS.length - done;
+  document.getElementById("countRow").innerHTML =
+    `<span class="count-pill yes">${done}× beantwortet</span>` +
+    (open ? `<span class="count-pill open">${open} offen</span>` : "");
+  const box = document.getElementById("summaryBox");
+  if (box.classList.contains("open")) box.textContent = buildSummary();
+}
+updateProgress();
+
+/* ---------- Diktierfunktion (Web Speech API) ---------- */
+let activeRec = null;
+function setupMic(btn, ta, hint, i, render) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    btn.addEventListener("click", () => {
+      hint.textContent = "Diktieren wird von diesem Browser nicht unterstützt. Am besten Google Chrome nutzen, oder einfach tippen.";
+    });
+    return;
+  }
+  let rec = null;
+  let listening = false;   // gewollter Zustand (Button an/aus)
+  let committed = "";      // fest übernommener Text
+
+  function stopUI() {
+    btn.classList.remove("rec");
+    hint.textContent = "";
+    hint.classList.remove("recording");
+  }
+
+  function startRec() {
+    rec = new SR();
+    activeRec = { stop: () => { listening = false; try { rec.abort(); } catch(e){} } };
+    rec.lang = "de-DE";
+    // Bewusst KEIN continuous-Modus: kurze Sessions + Neustart ist das
+    // zuverlässigste Muster (dictation.io-Ansatz), continuous ist in
+    // Chrome und Safari notorisch instabil.
+    rec.continuous = false;
+    rec.interimResults = true;
+    let gotFinal = false;
+    // Arc, Brave & Co. haben keine Google-Speech-Keys: Aufnahme läuft, aber es
+    // kommt nie ein Ergebnis. Nach 7s ohne Resultat Hinweis zeigen.
+    if (!window._speechCheckTimer) {
+      window._speechCheckTimer = setTimeout(() => {
+        if (listening && !committed.trim() && !ta.value.trim()) {
+          hint.textContent = "Es kommt nichts an? Das Diktieren funktioniert nur in Google Chrome (nicht in Arc, Brave oder Firefox). Alternativ einfach tippen.";
+          hint.classList.add("recording");
+        }
+      }, 7000);
+    }
+    rec.onresult = (e) => {
+      clearTimeout(window._speechCheckTimer);
+      window._speechCheckTimer = 1;
+      let interim = "";
+      for (let k = 0; k < e.results.length; k++) {
+        const r = e.results[k];
+        if (r.isFinal) { committed += r[0].transcript.trim() + " "; gotFinal = true; }
+        else interim += r[0].transcript;
+      }
+      ta.value = (committed + interim).trimStart();
+      state[i].note = ta.value;
+      render();
+      updateProgress();
+      saveState();
+    };
+    rec.onend = () => {
+      ta.value = committed.trimStart();
+      state[i].note = ta.value;
+      render();
+      updateProgress();
+      saveState();
+      if (listening) {
+        // Neustart mit Pause: sofortige Restarts werden von Chrome gedrosselt
+        setTimeout(() => { if (listening) startRec(); }, gotFinal ? 150 : 400);
+        return;
+      }
+      stopUI();
+      rec = null;
+      activeRec = null;
+    };
+    rec.onerror = (e) => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        listening = false;
+        stopUI();
+        hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte Berechtigung im Browser erlauben oder tippen.";
+      }
+      // "no-speech" / "aborted" ignorieren, onend regelt den Neustart
+    };
+    try { rec.start(); } catch(e) { /* schon gestartet, ignorieren */ }
+  }
+
+  btn.addEventListener("click", () => {
+    if (listening) {
+      listening = false;
+      try { rec && rec.stop(); } catch(e){}
+      stopUI();
+      return;
+    }
+    if (activeRec) activeRec.stop();
+    listening = true;
+    committed = ta.value ? ta.value.trim() + " " : "";
+    btn.classList.add("rec");
+    hint.textContent = "Aufnahme läuft... zum Beenden nochmal aufs Mikrofon tippen.";
+    hint.classList.add("recording");
+    startRec();
+  });
+}
+
+/* ---------- Zusammenfassung + Versand ---------- */
+function buildSummary() {
+  let out = "Onboarding-Antworten von Philip Stapmanns (Enduure)\n\n";
+  TOPICS.forEach((t, i) => {
+    const s = state[i];
+    out += `${i+1}. ${t.q}\n   Antwort: ${s.note.trim() ? s.note.trim() : "(offen)"}\n\n`;
+  });
+  return out.trim();
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function checkOpen() {
+  const open = state.filter(s => !s.note.trim()).length;
+  if (open > 0 && !confirm(`Du hast noch ${open} Frage(n) ohne Antwort. Trotzdem senden?`)) return false;
+  return true;
+}
+
+document.getElementById("summaryToggle").addEventListener("click", () => {
+  const box = document.getElementById("summaryBox");
+  box.classList.toggle("open");
+  if (box.classList.contains("open")) {
+    box.textContent = buildSummary();
+    document.getElementById("summaryToggle").textContent = "Zusammenfassung ausblenden";
+  } else {
+    document.getElementById("summaryToggle").textContent = "Zusammenfassung ansehen";
+  }
+});
+
+function showThanks(sent) {
+  if (!sent) {
+    document.getElementById("thanksTitle").textContent = "Fertig, alles kopiert!";
+    document.getElementById("thanksText").textContent = "Jetzt nur noch in WhatsApp einfügen und an Melchior schicken. Danke dir!";
+  }
+  document.getElementById("submitMain").style.display = "none";
+  document.getElementById("thanksScreen").classList.add("show");
+  if (navigator.vibrate) navigator.vibrate([15, 60, 15]);
+}
+
+document.getElementById("sendBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.textContent = "Wird gesendet...";
+  try {
+    const res = await fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ feedback: buildSummary() })
+    });
+    if (!res.ok) throw new Error("send failed");
+    showThanks(true);
+  } catch(e) {
+    // Fallback: kopieren und per WhatsApp schicken lassen
+    btn.disabled = false;
+    btn.textContent = "Antworten absenden";
+    try { await navigator.clipboard.writeText(buildSummary()); } catch(err) {}
+    toast("Senden hat nicht geklappt. Antworten sind kopiert: schick sie per WhatsApp.");
+  }
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  await navigator.clipboard.writeText(buildSummary());
+  showThanks(false);
+});
+document.getElementById("copyAgain").addEventListener("click", async () => {
+  await navigator.clipboard.writeText(buildSummary());
+  toast("Kopiert");
+});
+</script>
+</body>
+</html>
