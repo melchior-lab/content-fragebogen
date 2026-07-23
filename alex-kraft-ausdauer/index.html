@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kraft vs. Ausdauer Guide-Interview · Alex Kukla × Melchior Sorg</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e6e6e3;
+    --border-strong: #d4d4d0;
+    --text: #1a1a18;
+    --text-soft: #6b6b66;
+    --text-faint: #9c9c96;
+    --accent: #0a5c36;
+    --accent-soft: #e8f3ed;
+    --red: #b3362b;
+    --red-soft: #faeceb;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615;
+      --card: #1f1f1d;
+      --border: #2e2e2b;
+      --border-strong: #3d3d39;
+      --text: #f0f0ee;
+      --text-soft: #a3a39d;
+      --text-faint: #6e6e68;
+      --accent: #4fae7f;
+      --accent-soft: #1d3329;
+      --red: #d96a5f;
+      --red-soft: #3a2321;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 720px; margin: 0 auto;
+    padding: 12px 24px 10px;
+  }
+  .header-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 8px;
+  }
+  .brand { font-weight: 650; font-size: 15px; letter-spacing: -0.01em; }
+  .brand span { color: var(--text-faint); font-weight: 450; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-label { font-size: 13px; color: var(--text-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .progress-track {
+    width: 120px; height: 5px; border-radius: 99px;
+    background: var(--border); overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Sprungliste */
+  .jump-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .jump {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--text-soft);
+    font-size: 11.5px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .jump:hover { border-color: var(--text-faint); }
+  .jump.done-yes { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 120px; }
+
+  .intro { margin-bottom: 48px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 99px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .intro p { color: var(--text-soft); font-size: 16.5px; max-width: 560px; }
+  .intro p + p { margin-top: 10px; }
+  .intro strong { color: var(--text); font-weight: 600; }
+  .meta-row {
+    display: flex; gap: 14px; margin-top: 16px; flex-wrap: wrap;
+    font-size: 13.5px; color: var(--text-faint);
+  }
+  .meta-row span { display: flex; align-items: center; gap: 5px; }
+
+  .module-list { margin-top: 22px; display: flex; flex-direction: column; gap: 5px; }
+  .module-list div { font-size: 14px; color: var(--text-soft); }
+  .module-list b { color: var(--text); }
+
+  /* ---------- Module header ---------- */
+  .module-header {
+    margin: 44px 0 20px;
+    padding-top: 4px;
+  }
+  .module-header .module-eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .module-header h2 {
+    font-size: 22px; font-weight: 700; letter-spacing: -0.02em;
+  }
+  .module-header hr {
+    border: none; border-top: 1px solid var(--border);
+    margin-top: 14px;
+  }
+  #topics .module-header:first-child { margin-top: 0; }
+
+  /* ---------- Question Card ---------- */
+  .topic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+    scroll-margin-top: 92px;
+  }
+  .topic.done { border-color: var(--border-strong); }
+  .topic-num {
+    font-size: 12.5px; font-weight: 600; color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+  }
+  .topic h2 { font-size: 19px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 12px; }
+
+  .btw-label {
+    font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+  .btw-text { color: var(--text-soft); font-size: 14.5px; font-style: italic; margin-bottom: 20px; }
+
+  .answer-wrap { position: relative; margin-top: 4px; }
+  textarea {
+    width: 100%;
+    font: inherit; font-size: 15px;
+    padding: 12px 52px 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    min-height: 90px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--card); }
+  textarea::placeholder { color: var(--text-faint); }
+
+  .mic {
+    position: absolute; right: 10px; top: 10px;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .mic:hover { border-color: var(--text-faint); }
+  .mic svg { width: 16px; height: 16px; fill: var(--text-soft); }
+  .mic.rec { background: var(--red); border-color: var(--red); animation: pulse 1.4s ease-in-out infinite; }
+  .mic.rec svg { fill: #fff; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(179,54,43,.35); }
+    50% { box-shadow: 0 0 0 7px rgba(179,54,43,0); }
+  }
+  .mic-hint { font-size: 12.5px; color: var(--text-faint); margin-top: 8px; }
+  .mic-hint.recording { color: var(--red); font-weight: 550; }
+
+  /* ---------- Submit / Zusammenfassung ---------- */
+  .submit-section {
+    margin-top: 48px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .submit-section h2 { font-size: 20px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 8px; }
+  .submit-section p { color: var(--text-soft); font-size: 15px; margin-bottom: 20px; }
+  .count-row {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .count-pill {
+    font-size: 13.5px; font-weight: 600;
+    padding: 5px 12px; border-radius: 99px;
+    font-variant-numeric: tabular-nums;
+  }
+  .count-pill.yes { background: var(--accent-soft); color: var(--accent); }
+  .count-pill.open { background: var(--border); color: var(--text-soft); }
+
+  .summary-box {
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+  }
+  .summary-box.open { display: block; }
+  .summary-toggle {
+    background: none; border: none; cursor: pointer;
+    font: inherit; font-size: 13.5px; font-weight: 550;
+    color: var(--accent);
+    margin-bottom: 18px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none; cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(.92); }
+  .btn-secondary {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover { border-color: var(--text-faint); }
+
+  /* Danke-Screen */
+  .thanks { display: none; }
+  .thanks.show { display: block; }
+  .thanks .check {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .thanks .check svg { width: 28px; height: 28px; stroke: var(--accent); stroke-width: 3; fill: none; }
+  .autosave-note {
+    font-size: 12.5px; color: var(--text-faint); margin-top: 16px;
+  }
+
+  footer {
+    text-align: center; padding: 32px 24px 48px;
+    font-size: 13px; color: var(--text-faint);
+  }
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: var(--bg);
+    font-size: 14px; font-weight: 550;
+    padding: 11px 20px; border-radius: 99px;
+    opacity: 0; transition: all .3s cubic-bezier(.4,0,.2,1);
+    pointer-events: none; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 540px) {
+    main { padding: 32px 16px 100px; }
+    .topic { padding: 20px 18px; scroll-margin-top: 110px; }
+    h1 { font-size: 26px; }
+    .progress-track { width: 64px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="brand">Melchior Sorg <span>· Guide-Interview</span></div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">0 / 13</div>
+      </div>
+    </div>
+    <div class="jump-row" id="jumpRow"></div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <div class="eyebrow">Für Alex</div>
+    <h1>Kraft vs. Ausdauer — dein Guide-Interview</h1>
+    <p>13 Fragen, 4 Module, ca. 15 bis 20 Minuten. Du bist der Experte, ich sammle nur ein.</p>
+    <p><strong>Pro-Tipp:</strong> Nutz das Mikrofon-Symbol im Textfeld und sprich deine Antworten einfach ein statt zu tippen. Dann hör ich direkt wie du wirklich redest, das ist für den Guide Gold wert (am besten in Google Chrome öffnen).</p>
+    <div class="module-list">
+      <div>📌 <b>Modul 1</b> — Das Vorurteil</div>
+      <div>📌 <b>Modul 2</b> — Was wirklich passiert</div>
+      <div>📌 <b>Modul 3</b> — Der Einstieg</div>
+      <div>📌 <b>Modul 4</b> — Fehler, Setup, Geschichte, Abschluss</div>
+    </div>
+    <div class="meta-row">
+      <span>⏱ Dauert ca. 15–20 Minuten</span>
+      <span>💾 Speichert automatisch, du kannst jederzeit unterbrechen</span>
+    </div>
+  </div>
+
+  <div id="topics"></div>
+
+  <div class="submit-section" id="submitSection">
+    <div id="submitMain">
+      <h2>Fertig?</h2>
+      <div class="count-row" id="countRow"></div>
+      <button class="summary-toggle" id="summaryToggle" type="button">Zusammenfassung ansehen</button>
+      <div class="summary-box" id="summaryBox"></div>
+      <p>Ein Klick, und deine Antworten landen direkt bei mir.</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="sendBtn">Antworten absenden</button>
+        <button class="btn btn-secondary" id="copyBtn">Nur kopieren</button>
+      </div>
+    </div>
+    <div class="thanks" id="thanksScreen">
+      <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
+      <h2 id="thanksTitle">Angekommen!</h2>
+      <p id="thanksText">Deine Antworten sind bei Melchior gelandet. Danke dir!</p>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="copyAgain">Antworten zusätzlich kopieren</button>
+      </div>
+    </div>
+    <div class="autosave-note">Deine Eingaben werden automatisch in deinem Browser gespeichert.</div>
+  </div>
+</main>
+
+<footer>Melchior Sorg · LinkedIn Authority Engine</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const TOPICS = [
+  {
+    module: "Modul 1 — Das Vorurteil",
+    q: "Wie tief sitzt „Cardio frisst meine Muskeln“ bei Klienten die aus dem Kraftsport kommen? Begegnet dir das noch oft, oder ist das in der Community mittlerweile kein Thema mehr?",
+    btw: "Geht auf eine einzige Studie von 1980 zurück. Probanden trainierten mit extremem Volumen ohne Erholungsmanagement. Ab Woche 7 stagnierte die Kraft. Seitdem gilt: Beides geht nicht zusammen. Aktuelle Studien mit über 43 Untersuchungen widerlegen das komplett."
+  },
+  {
+    module: "Modul 1 — Das Vorurteil",
+    q: "Und die andere Seite: Wie oft hörst du von Läufern oder Triathleten „Krafttraining macht mich schwerer und langsamer, das will ich nicht“? Wie tief sitzt dieser Glaube?",
+    btw: "Studien zeigen das Gegenteil. Richtiges Krafttraining verbessert die Laufleistung um 2 bis 15 Prozent. Jan Frodeno und Eliud Kipchoge machen beide 2 Mal pro Woche Krafttraining."
+  },
+  {
+    module: "Modul 2 — Was wirklich passiert",
+    q: "Wann stört Ausdauertraining das Krafttraining bei deinen Klienten in der Praxis wirklich? Also wann merkst du konkret: hier bremst das eine das andere?",
+    btw: "Krafttraining und Ausdauertraining aktivieren verschiedene Körpersignale. Ausdauer schaltet kurzfristig einen Energie-Sparmodus an, der den Muskelaufbau-Signalweg bremst. Aber nur kurzfristig, und nur wenn man beides zu eng zusammenpackt. Bei 24 Stunden Abstand zwischen den Einheiten: kein messbarer negativer Effekt in Langzeitstudien."
+  },
+  {
+    module: "Modul 2 — Was wirklich passiert",
+    q: "Und andersrum: Wann blockiert Krafttraining die Ausdauerleistung? Gibt es das bei dir in der Praxis, oder ist das eher ein Mythos?",
+    btw: "Für Ausdauersportler passiert das Gegenteil von dem was die meisten erwarten. Richtig eingesetzt verbessert Krafttraining die Laufleistung deutlich, ohne die maximale Sauerstoffaufnahme zu verändern. Der Körper wird effizienter, nicht langsamer."
+  },
+  {
+    module: "Modul 2 — Was wirklich passiert",
+    q: "Was empfiehlst du beim Timing konkret wenn jemand beides in die Woche packt? Und was ändert sich am Krafttraining selbst wenn Ausdauer dazukommt, weniger Sets, andere Übungen, geringere Frequenz?",
+    btw: "Die Forschung sagt unter 3 Stunden Abstand zwischen Kraft und Ausdauer erhöht das Risiko deutlich. 24 Stunden oder mehr: kein messbarer Effekt. Wenn beides am gleichen Tag: Schwerpunkt zuerst. Willst du Kraft aufbauen, Krafttraining zuerst."
+  },
+  {
+    module: "Modul 2 — Was wirklich passiert",
+    q: "Welches Krafttraining hilft einem Ausdauersportler wirklich, und welches bringt nichts oder schadet sogar?",
+    btw: "Die Wissenschaft unterscheidet hier klar. Wenige Wiederholungen mit hohem Gewicht verbessert die Laufleistung ohne Gewicht aufzubauen. Viele Wiederholungen mit leichten Gewichten im Gym baut weder Kraft noch Masse, das ist einfach schlechtes Cardio. Wer als Ausdauersportler Angst vor Gewichtszunahme hat und deshalb nur mit 5 Kilo trainiert: auf dem Level passiert gar nichts."
+  },
+  {
+    module: "Modul 3 — Der Einstieg",
+    q: "Laufen oder Radfahren als erste Ausdauer-Einheit für jemanden der aus dem Kraftsport kommt? Was empfiehlst du und warum?",
+    btw: "Die Wissenschaft ist hier nicht eindeutig. Laufen hat mehr Muskelschaden in den Beinen, was potenziell mehr stört. Andere Studien fanden das Gegenteil. Mehrheitsmeinung: Bei starkem Bein-Fokus im Krafttraining ist Radfahren wahrscheinlich der schonendere Einstieg."
+  },
+  {
+    module: "Modul 3 — Der Einstieg",
+    q: "Wie erklärst du Zone 2 in einem Satz jemandem der noch nie davon gehört hat? Und wie sehen die ersten vier Wochen aus für einen Kraftsportler der anfängt Ausdauer zu integrieren, was ist der Plan?",
+    btw: "Wissenschaftlich gilt Zone 2 als optimaler Einstieg, so locker dass man noch reden kann, das Nervensystem wird kaum belastet und das Krafttraining bleibt unberührt. Empfehlung aus der Forschung: 2 bis 3 Einheiten pro Woche, 20 bis 30 Minuten, erst dann steigern."
+  },
+  {
+    module: "Modul 3 — Der Einstieg",
+    q: "Was ist dein Ernährungs-Rat Nummer 1 sobald jemand Ausdauer in seinen Plan integriert?",
+    btw: "Aktuelle Forschung ist eindeutig. Laufen allein baut keine Muskeln ab. Kaloriendefizit tut es. Wer anfängt zu laufen und die Gesamtkalorien nicht anpasst, fährt automatisch in ein Defizit. Protein bei 2,0 Gramm pro Kilogramm Körpergewicht täglich, bei höherer Belastung eher mehr."
+  },
+  {
+    module: "Modul 4 — Fehler, Setup, Geschichte, Abschluss",
+    q: "Was ist bei deinen Klienten der Fehler Nummer 1 wenn sie beides kombinieren wollen? Gerne mit einem konkreten Beispiel aus deiner Praxis. Und was ist die überraschendste Sache die du zu diesem Thema weißt, die du so nirgendwo anders liest oder hörst?",
+    btw: "Im Internet tauchen immer dieselben Fehler auf. Zu viel zu schnell. Protein nicht erhöhen. Gleiche Muskelgruppen zu kurz hintereinander belasten. Und bei Ausdauersportlern: zu leichte Gewichte im Gym weil sie Angst vor Masse haben, dabei passiert auf dem Level gar nichts."
+  },
+  {
+    module: "Modul 4 — Fehler, Setup, Geschichte, Abschluss",
+    q: "Wie viel Kraft, wie viel Ausdauer machst du selbst gerade pro Woche, und in welchem Verhältnis?",
+    btw: null
+  },
+  {
+    module: "Modul 4 — Fehler, Setup, Geschichte, Abschluss",
+    q: "Wann hast du selbst gemerkt dass Kraft und Ausdauer sich nicht ausschließen sondern gegenseitig stärken? Was war der Moment, die Situation, die Erkenntnis?",
+    btw: null
+  },
+  {
+    module: "Modul 4 — Fehler, Setup, Geschichte, Abschluss",
+    q: "Was kann jemand nach diesem Guide konkret, das er vorher nicht konnte? Ein Satz. Nicht das Thema, sondern das Ergebnis.",
+    btw: null
+  }
+];
+
+// Formspree: Versand geht direkt per Mail an Melchior.
+const FORMSPREE_ID = "mykrkzgk";
+
+const STORAGE_KEY = "fragebogen-alex-kraft-ausdauer-v1";
+const container = document.getElementById("topics");
+const jumpRow = document.getElementById("jumpRow");
+
+let state = TOPICS.map(() => ({ note: "" }));
+
+/* ---------- Autosave ---------- */
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (Array.isArray(saved) && saved.length === TOPICS.length) state = saved;
+  } catch(e) {}
+}
+loadState();
+
+let lastModule = null;
+
+TOPICS.forEach((t, i) => {
+  if (t.module !== lastModule) {
+    const mh = document.createElement("div");
+    mh.className = "module-header";
+    const parts = t.module.split(" — ");
+    mh.innerHTML = `<div class="module-eyebrow">${parts[0]}</div><h2>${parts[1]}</h2><hr>`;
+    container.appendChild(mh);
+    lastModule = t.module;
+  }
+
+  const el = document.createElement("div");
+  el.className = "topic";
+  el.id = "topic-" + i;
+  el.innerHTML = `
+    <div class="topic-num">${String(i+1).padStart(2,"0")} / ${TOPICS.length}</div>
+    <h2>${t.q}</h2>
+    ${t.btw ? `<div class="btw-label">Btw</div><p class="btw-text">${t.btw}</p>` : ""}
+    <div class="answer-wrap">
+      <textarea placeholder="Deine Antwort, gerne mit einem konkreten Beispiel"></textarea>
+      <button class="mic" title="Antwort diktieren" type="button">
+        <svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>
+      </button>
+    </div>
+    <div class="mic-hint"></div>
+  `;
+  container.appendChild(el);
+
+  // Sprungliste
+  const jump = document.createElement("button");
+  jump.className = "jump";
+  jump.type = "button";
+  jump.textContent = i + 1;
+  jump.title = t.q.slice(0, 60) + (t.q.length > 60 ? "…" : "");
+  jump.addEventListener("click", () => el.scrollIntoView({ block: "start" }));
+  jumpRow.appendChild(jump);
+
+  const ta = el.querySelector("textarea");
+
+  function render() {
+    const filled = !!state[i].note.trim();
+    el.classList.toggle("done", filled);
+    jump.classList.toggle("done-yes", filled);
+  }
+
+  ta.value = state[i].note || "";
+  ta.addEventListener("input", () => {
+    state[i].note = ta.value;
+    render();
+    updateProgress();
+    saveState();
+  });
+
+  setupMic(el.querySelector(".mic"), ta, el.querySelector(".mic-hint"), i, render);
+  render();
+});
+
+function updateProgress() {
+  const done = state.filter(s => s.note.trim()).length;
+  document.getElementById("progressFill").style.width = (done/TOPICS.length*100)+"%";
+  document.getElementById("progressLabel").textContent = done+" / "+TOPICS.length;
+  const open = TOPICS.length - done;
+  document.getElementById("countRow").innerHTML =
+    `<span class="count-pill yes">${done}× beantwortet</span>` +
+    (open ? `<span class="count-pill open">${open} offen</span>` : "");
+  const box = document.getElementById("summaryBox");
+  if (box.classList.contains("open")) box.textContent = buildSummary();
+}
+updateProgress();
+
+/* ---------- Diktierfunktion (Web Speech API) ---------- */
+let activeRec = null;
+function setupMic(btn, ta, hint, i, render) {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    btn.addEventListener("click", () => {
+      hint.textContent = "Diktieren wird von diesem Browser nicht unterstützt. Am besten Google Chrome nutzen, oder einfach tippen.";
+    });
+    return;
+  }
+  let rec = null;
+  let listening = false;   // gewollter Zustand (Button an/aus)
+  let committed = "";      // fest übernommener Text
+
+  function stopUI() {
+    btn.classList.remove("rec");
+    hint.textContent = "";
+    hint.classList.remove("recording");
+  }
+
+  function startRec() {
+    rec = new SR();
+    activeRec = { stop: () => { listening = false; try { rec.abort(); } catch(e){} } };
+    rec.lang = "de-DE";
+    // Bewusst KEIN continuous-Modus: kurze Sessions + Neustart ist das
+    // zuverlässigste Muster (dictation.io-Ansatz), continuous ist in
+    // Chrome und Safari notorisch instabil.
+    rec.continuous = false;
+    rec.interimResults = true;
+    let gotFinal = false;
+    // Arc, Brave & Co. haben keine Google-Speech-Keys: Aufnahme läuft, aber es
+    // kommt nie ein Ergebnis. Nach 7s ohne Resultat Hinweis zeigen.
+    if (!window._speechCheckTimer) {
+      window._speechCheckTimer = setTimeout(() => {
+        if (listening && !committed.trim() && !ta.value.trim()) {
+          hint.textContent = "Es kommt nichts an? Das Diktieren funktioniert nur in Google Chrome (nicht in Arc, Brave oder Firefox). Alternativ einfach tippen.";
+          hint.classList.add("recording");
+        }
+      }, 7000);
+    }
+    rec.onresult = (e) => {
+      clearTimeout(window._speechCheckTimer);
+      window._speechCheckTimer = 1;
+      let interim = "";
+      for (let k = 0; k < e.results.length; k++) {
+        const r = e.results[k];
+        if (r.isFinal) { committed += r[0].transcript.trim() + " "; gotFinal = true; }
+        else interim += r[0].transcript;
+      }
+      ta.value = (committed + interim).trimStart();
+      state[i].note = ta.value;
+      saveState();
+    };
+    rec.onend = () => {
+      ta.value = committed.trimStart();
+      state[i].note = ta.value;
+      saveState();
+      render();
+      updateProgress();
+      if (listening) {
+        // Neustart mit Pause: sofortige Restarts werden von Chrome gedrosselt
+        setTimeout(() => { if (listening) startRec(); }, gotFinal ? 150 : 400);
+        return;
+      }
+      stopUI();
+      rec = null;
+      activeRec = null;
+    };
+    rec.onerror = (e) => {
+      if (e.error === "not-allowed" || e.error === "service-not-allowed") {
+        listening = false;
+        stopUI();
+        hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte Berechtigung im Browser erlauben oder tippen.";
+      }
+      // "no-speech" / "aborted" ignorieren, onend regelt den Neustart
+    };
+    try { rec.start(); } catch(e) { /* schon gestartet, ignorieren */ }
+  }
+
+  btn.addEventListener("click", () => {
+    if (listening) {
+      listening = false;
+      try { rec && rec.stop(); } catch(e){}
+      stopUI();
+      return;
+    }
+    if (activeRec) activeRec.stop();
+    listening = true;
+    committed = ta.value ? ta.value.trim() + " " : "";
+    btn.classList.add("rec");
+    hint.textContent = "Aufnahme läuft... zum Beenden nochmal aufs Mikrofon tippen.";
+    hint.classList.add("recording");
+    startRec();
+  });
+}
+
+/* ---------- Zusammenfassung + Versand ---------- */
+function buildSummary() {
+  let out = "Feedback von Alex — Kraft vs. Ausdauer Guide-Interview\n\n";
+  TOPICS.forEach((t, i) => {
+    const s = state[i];
+    out += `${i+1}. ${t.q}`;
+    out += s.note.trim() ? `\n   Alex: ${s.note.trim()}` : `\n   Alex: (keine Antwort)`;
+    out += "\n\n";
+  });
+  return out.trim();
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function checkOpen() {
+  const open = state.filter(s => !s.note.trim()).length;
+  if (open > 0 && !confirm(`Du hast noch ${open} Frage(n) ohne Antwort. Trotzdem senden?`)) return false;
+  return true;
+}
+
+document.getElementById("summaryToggle").addEventListener("click", () => {
+  const box = document.getElementById("summaryBox");
+  box.classList.toggle("open");
+  if (box.classList.contains("open")) {
+    box.textContent = buildSummary();
+    document.getElementById("summaryToggle").textContent = "Zusammenfassung ausblenden";
+  } else {
+    document.getElementById("summaryToggle").textContent = "Zusammenfassung ansehen";
+  }
+});
+
+function showThanks(sent) {
+  if (!sent) {
+    document.getElementById("thanksTitle").textContent = "Fertig, alles kopiert!";
+    document.getElementById("thanksText").textContent = "Jetzt nur noch in WhatsApp einfügen und an Melchior schicken. Danke dir!";
+  }
+  document.getElementById("submitMain").style.display = "none";
+  document.getElementById("thanksScreen").classList.add("show");
+  if (navigator.vibrate) navigator.vibrate([15, 60, 15]);
+}
+
+document.getElementById("sendBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.textContent = "Wird gesendet...";
+  try {
+    const res = await fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ feedback: buildSummary() })
+    });
+    if (!res.ok) throw new Error("send failed");
+    showThanks(true);
+  } catch(e) {
+    // Fallback: kopieren und per WhatsApp schicken lassen
+    btn.disabled = false;
+    btn.textContent = "Antworten absenden";
+    try { await navigator.clipboard.writeText(buildSummary()); } catch(err) {}
+    toast("Senden hat nicht geklappt. Antworten sind kopiert: schick sie per WhatsApp.");
+  }
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  await navigator.clipboard.writeText(buildSummary());
+  showThanks(false);
+});
+document.getElementById("copyAgain").addEventListener("click", async () => {
+  await navigator.clipboard.writeText(buildSummary());
+  toast("Kopiert");
+});
+</script>
+</body>
+</html>
