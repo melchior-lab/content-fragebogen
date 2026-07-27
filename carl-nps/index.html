@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NPS Feedback · Carl Mally × Melchior Sorg</title>
+<title>NPS Feedback · Melchior Sorg</title>
 <style>
   :root {
     --bg: #fafafa;
@@ -157,6 +157,20 @@
   }
   textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--card); }
   textarea::placeholder { color: var(--text-faint); }
+
+  .name-input {
+    width: 100%;
+    font: inherit; font-size: 15px;
+    padding: 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .name-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--card); }
+  .name-input::placeholder { color: var(--text-faint); }
 
   .mic {
     position: absolute; right: 10px; top: 10px;
@@ -335,13 +349,21 @@
 
 <main>
   <div class="intro">
-    <div class="eyebrow">Für Carl</div>
+    <div class="eyebrow" id="eyebrowText">Feedback</div>
     <h1>Kurzes Feedback zu unserer Zusammenarbeit</h1>
     <p>Wir sind jetzt gut sechs Wochen unterwegs. Ich will wissen wie sich das für dich anfühlt, nicht nur wie die Zahlen aussehen.</p>
     <p>5 Fragen, ehrliche Antworten sind mir lieber als nette. Tippen oder <strong>diktier deine Antwort über das Mikrofon-Symbol</strong> (am besten in Google Chrome öffnen).</p>
     <div class="meta-row">
       <span>⏱ Dauert ca. 3 Minuten</span>
       <span>💾 Speichert automatisch, du kannst jederzeit unterbrechen</span>
+    </div>
+  </div>
+
+  <div class="topic" id="nameCard">
+    <div class="topic-num">Bevor es losgeht</div>
+    <h2>Wie heißt du?</h2>
+    <div class="answer-wrap">
+      <input class="name-input" id="nameInput" type="text" placeholder="Dein Vorname" autocomplete="given-name">
     </div>
   </div>
 
@@ -430,6 +452,24 @@ function loadState() {
   } catch(e) {}
 }
 loadState();
+
+/* ---------- Name (Schritt 0) ---------- */
+const NAME_KEY = STORAGE_KEY + "-name";
+const nameInput = document.getElementById("nameInput");
+const eyebrowText = document.getElementById("eyebrowText");
+function loadName() {
+  try { return localStorage.getItem(NAME_KEY) || ""; } catch(e) { return ""; }
+}
+function saveName(v) {
+  try { localStorage.setItem(NAME_KEY, v); } catch(e) {}
+}
+function updateEyebrow() {
+  const n = nameInput.value.trim();
+  eyebrowText.textContent = n ? "Für " + n : "Feedback";
+}
+nameInput.value = loadName();
+updateEyebrow();
+nameInput.addEventListener("input", () => { saveName(nameInput.value); updateEyebrow(); });
 
 const micSvg = `<svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>`;
 
@@ -643,7 +683,8 @@ function setupMic(btn, ta, hint, onChange) {
 
 /* ---------- Zusammenfassung + Versand ---------- */
 function buildSummary() {
-  let out = "NPS Feedback von Carl\n\n";
+  const n = nameInput.value.trim();
+  let out = "NPS Feedback von " + (n || "(kein Name angegeben)") + "\n\n";
   QUESTIONS.forEach((q, i) => {
     const s = state[i];
     out += `${i+1}. ${q.title}\n`;
@@ -670,7 +711,11 @@ function toast(msg) {
 function checkOpen() {
   const done = state.filter((s, i) => QUESTIONS[i].type === "text" ? !!s.note.trim() : s.value !== null).length;
   const open = QUESTIONS.length - done;
-  if (open > 0 && !confirm(`Du hast noch ${open} Frage(n) ohne Antwort. Trotzdem senden?`)) return false;
+  const missingName = !nameInput.value.trim();
+  const parts = [];
+  if (missingName) parts.push("deinen Namen");
+  if (open > 0) parts.push(open + " Frage(n) ohne Antwort");
+  if (parts.length && !confirm(`Du hast noch ${parts.join(" und ")}. Trotzdem senden?`)) return false;
   return true;
 }
 
