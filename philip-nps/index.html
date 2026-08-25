@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NPS Feedback · Philip Stapmanns × Melchior Sorg</title>
+<style>
+  :root {
+    --bg: #fafafa;
+    --card: #ffffff;
+    --border: #e6e6e3;
+    --border-strong: #d4d4d0;
+    --text: #1a1a18;
+    --text-soft: #6b6b66;
+    --text-faint: #9c9c96;
+    --accent: #0a5c36;
+    --accent-soft: #e8f3ed;
+    --red: #b3362b;
+    --red-soft: #faeceb;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.03);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #161615;
+      --card: #1f1f1d;
+      --border: #2e2e2b;
+      --border-strong: #3d3d39;
+      --text: #f0f0ee;
+      --text-soft: #a3a39d;
+      --text-faint: #6e6e68;
+      --accent: #4fae7f;
+      --accent-soft: #1d3329;
+      --red: #d96a5f;
+      --red-soft: #3a2321;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.2);
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .header-inner {
+    max-width: 720px; margin: 0 auto;
+    padding: 12px 24px 10px;
+  }
+  .header-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    margin-bottom: 8px;
+  }
+  .brand { font-weight: 650; font-size: 15px; letter-spacing: -0.01em; }
+  .brand span { color: var(--text-faint); font-weight: 450; }
+  .progress-wrap { display: flex; align-items: center; gap: 10px; }
+  .progress-label { font-size: 13px; color: var(--text-soft); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .progress-track {
+    width: 120px; height: 5px; border-radius: 99px;
+    background: var(--border); overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%; width: 0%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width .35s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* Sprungliste */
+  .jump-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .jump {
+    width: 26px; height: 26px;
+    border-radius: 7px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--text-soft);
+    font-size: 11.5px; font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+    font-family: inherit;
+  }
+  .jump:hover { border-color: var(--text-faint); }
+  .jump.done-yes { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 720px; margin: 0 auto; padding: 48px 24px 120px; }
+
+  .intro { margin-bottom: 48px; }
+  .eyebrow {
+    display: inline-block;
+    font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 4px 10px; border-radius: 99px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-size: 32px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2;
+    margin-bottom: 14px;
+  }
+  .intro p { color: var(--text-soft); font-size: 16.5px; max-width: 560px; }
+  .intro p + p { margin-top: 10px; }
+  .intro strong { color: var(--text); font-weight: 600; }
+  .meta-row {
+    display: flex; gap: 14px; margin-top: 16px;
+    font-size: 13.5px; color: var(--text-faint);
+  }
+  .meta-row span { display: flex; align-items: center; gap: 5px; }
+
+  /* ---------- Question Card ---------- */
+  .topic {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color .2s;
+    scroll-margin-top: 92px;
+  }
+  .topic.done { border-color: var(--border-strong); }
+  .topic-num {
+    font-size: 12.5px; font-weight: 600; color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+  }
+  .topic h2 { font-size: 19px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 20px; }
+
+  .answer-wrap { position: relative; }
+  textarea {
+    width: 100%;
+    font: inherit; font-size: 15px;
+    padding: 12px 52px 12px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    min-height: 76px;
+    outline: none;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); background: var(--card); }
+  textarea::placeholder { color: var(--text-faint); }
+
+  .mic {
+    position: absolute; right: 10px; top: 10px;
+    width: 34px; height: 34px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all .15s;
+  }
+  .mic:hover { border-color: var(--text-faint); }
+  .mic svg { width: 16px; height: 16px; fill: var(--text-soft); }
+  .mic.rec { background: var(--red); border-color: var(--red); animation: pulse 1.4s ease-in-out infinite; }
+  .mic.rec svg { fill: #fff; }
+  .mic.busy { opacity: .5; cursor: default; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(179,54,43,.35); }
+    50% { box-shadow: 0 0 0 7px rgba(179,54,43,0); }
+  }
+  .mic-hint { font-size: 12.5px; color: var(--text-faint); margin-top: 8px; }
+  .mic-hint.recording { color: var(--red); font-weight: 550; }
+
+  /* ---------- Scale (0-10) ---------- */
+  .scale-row {
+    display: grid; grid-template-columns: repeat(11, 1fr);
+    gap: 6px; margin-bottom: 8px;
+  }
+  .scale-btn {
+    font: inherit; font-size: 14px; font-weight: 600;
+    padding: 10px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--card);
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all .15s;
+    font-variant-numeric: tabular-nums;
+  }
+  .scale-btn:hover { border-color: var(--text-faint); color: var(--text); }
+  .scale-btn.sel { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+  }
+  .scale-btn.pop { animation: pop .25s ease; }
+  @media (prefers-reduced-motion: reduce) { .scale-btn.pop { animation: none; } }
+  .scale-labels {
+    display: flex; justify-content: space-between;
+    font-size: 12px; color: var(--text-faint);
+    margin-bottom: 20px;
+  }
+
+  .followup { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); }
+  .followup-title { font-size: 15px; font-weight: 650; letter-spacing: -0.01em; margin-bottom: 12px; }
+
+  /* ---------- Submit / Zusammenfassung ---------- */
+  .submit-section {
+    margin-top: 48px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px 28px;
+    text-align: center;
+  }
+  .submit-section h2 { font-size: 20px; font-weight: 650; letter-spacing: -0.015em; margin-bottom: 8px; }
+  .submit-section p { color: var(--text-soft); font-size: 15px; margin-bottom: 20px; }
+  .count-row {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .count-pill {
+    font-size: 13.5px; font-weight: 600;
+    padding: 5px 12px; border-radius: 99px;
+    font-variant-numeric: tabular-nums;
+  }
+  .count-pill.yes { background: var(--accent-soft); color: var(--accent); }
+  .count-pill.open { background: var(--border); color: var(--text-soft); }
+
+  .summary-box {
+    text-align: left;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: var(--text-soft);
+    white-space: pre-wrap;
+    max-height: 320px;
+    overflow-y: auto;
+    display: none;
+  }
+  .summary-box.open { display: block; }
+  .summary-toggle {
+    background: none; border: none; cursor: pointer;
+    font: inherit; font-size: 13.5px; font-weight: 550;
+    color: var(--accent);
+    margin-bottom: 18px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    font: inherit; font-size: 15px; font-weight: 600;
+    padding: 12px 22px;
+    border-radius: 8px;
+    border: none; cursor: pointer;
+    transition: all .15s;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { filter: brightness(.92); }
+  .btn-secondary {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border-strong);
+  }
+  .btn-secondary:hover { border-color: var(--text-faint); }
+
+  /* Danke-Screen */
+  .thanks { display: none; }
+  .thanks.show { display: block; }
+  .thanks .check {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .thanks .check svg { width: 28px; height: 28px; stroke: var(--accent); stroke-width: 3; fill: none; }
+  .autosave-note {
+    font-size: 12.5px; color: var(--text-faint); margin-top: 16px;
+  }
+
+  footer {
+    text-align: center; padding: 32px 24px 48px;
+    font-size: 13px; color: var(--text-faint);
+  }
+
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--text); color: var(--bg);
+    font-size: 14px; font-weight: 550;
+    padding: 11px 20px; border-radius: 99px;
+    opacity: 0; transition: all .3s cubic-bezier(.4,0,.2,1);
+    pointer-events: none; z-index: 100;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 540px) {
+    main { padding: 32px 16px 100px; }
+    .topic { padding: 20px 18px; scroll-margin-top: 110px; }
+    h1 { font-size: 26px; }
+    .progress-track { width: 64px; }
+    .scale-row { grid-template-columns: repeat(6, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="header-top">
+      <div class="brand">Melchior Sorg <span>· Feedback</span></div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-label" id="progressLabel">0 / 5</div>
+      </div>
+    </div>
+    <div class="jump-row" id="jumpRow"></div>
+  </div>
+</header>
+
+<main>
+  <div class="intro">
+    <div class="eyebrow">Für Philip</div>
+    <h1>Kurzes Feedback zu unserer Zusammenarbeit</h1>
+    <p>Wir sind jetzt gut vier Wochen unterwegs. Ich will wissen wie sich das für dich anfühlt, nicht nur wie die Zahlen aussehen.</p>
+    <p>5 Fragen, ehrliche Antworten sind mir lieber als nette. Tippen oder <strong>diktier deine Antwort über das Mikrofon-Symbol</strong>, funktioniert in jedem Browser, auch am Handy.</p>
+    <div class="meta-row">
+      <span>⏱ Dauert ca. 3 Minuten</span>
+      <span>💾 Speichert automatisch, du kannst jederzeit unterbrechen</span>
+    </div>
+  </div>
+
+  <div id="topics"></div>
+
+  <div class="submit-section" id="submitSection">
+    <div id="submitMain">
+      <h2>Fertig?</h2>
+      <div class="count-row" id="countRow"></div>
+      <button class="summary-toggle" id="summaryToggle" type="button">Zusammenfassung ansehen</button>
+      <div class="summary-box" id="summaryBox"></div>
+      <p>Ein Klick, und deine Antworten landen direkt bei mir.</p>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="sendBtn">Antworten absenden</button>
+        <button class="btn btn-secondary" id="copyBtn">Nur kopieren</button>
+      </div>
+    </div>
+    <div class="thanks" id="thanksScreen">
+      <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 6.5"/></svg></div>
+      <h2 id="thanksTitle">Angekommen!</h2>
+      <p id="thanksText">Deine Antworten sind bei Melchior gelandet. Danke dir!</p>
+      <div class="btn-row">
+        <button class="btn btn-secondary" id="copyAgain">Antworten zusätzlich kopieren</button>
+      </div>
+    </div>
+    <div class="autosave-note">Deine Eingaben werden automatisch in deinem Browser gespeichert.</div>
+  </div>
+</main>
+
+<footer>Melchior Sorg · LinkedIn Authority Engine</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const QUESTIONS = [
+  {
+    title: "Was läuft für dich gerade gut in unserer Zusammenarbeit?",
+    type: "text",
+    placeholder: "Was funktioniert richtig gut? Stichpunkte reichen."
+  },
+  {
+    title: "Was nervt dich, fehlt dir, oder könnte besser sein?",
+    type: "text",
+    placeholder: "Ehrlich schreiben, das hilft mir am meisten."
+  },
+  {
+    title: "Wie zufrieden bist du mit der Qualität meiner Arbeit für dich?",
+    type: "scale",
+    scaleLabels: ["überhaupt nicht zufrieden", "komplett zufrieden"],
+    followUp: {
+      title: "Was müsste passieren, damit du eine 10 gibst?",
+      placeholder: "Was würde für dich den Unterschied machen?",
+      showWhen: (v) => v !== null && v < 10
+    }
+  },
+  {
+    title: "Wie wahrscheinlich verlängerst du die Zusammenarbeit?",
+    type: "scale",
+    scaleLabels: ["auf keinen Fall", "auf jeden Fall"]
+  },
+  {
+    title: "Wie wahrscheinlich empfiehlst du mich weiter?",
+    type: "scale",
+    scaleLabels: ["auf keinen Fall", "auf jeden Fall"]
+  }
+];
+
+// Formspree: Versand geht direkt per Mail an Melchior.
+const FORMSPREE_ID = "mykrkzgk";
+
+const STORAGE_KEY = "fragebogen-philip-nps-v1";
+const container = document.getElementById("topics");
+const jumpRow = document.getElementById("jumpRow");
+
+let state = QUESTIONS.map(q => q.type === "text" ? { note: "" } : { value: null, followUpNote: "" });
+
+/* ---------- Autosave ---------- */
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (Array.isArray(saved) && saved.length === QUESTIONS.length) state = saved;
+  } catch(e) {}
+}
+loadState();
+
+const micSvg = `<svg viewBox="0 0 24 24"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-2.08A7 7 0 0 0 19 12h-2z"/></svg>`;
+
+QUESTIONS.forEach((q, i) => {
+  const el = document.createElement("div");
+  el.className = "topic";
+  el.id = "topic-" + i;
+
+  let body = "";
+  if (q.type === "text") {
+    body = `
+      <div class="answer-wrap">
+        <textarea placeholder="${q.placeholder}"></textarea>
+        <button class="mic" title="Antwort diktieren" type="button">${micSvg}</button>
+      </div>
+      <div class="mic-hint"></div>
+    `;
+  } else {
+    let btns = "";
+    for (let n = 0; n <= 10; n++) btns += `<button class="scale-btn" data-v="${n}" type="button">${n}</button>`;
+    body = `
+      <div class="scale-row">${btns}</div>
+      <div class="scale-labels"><span>${q.scaleLabels[0]}</span><span>${q.scaleLabels[1]}</span></div>
+    `;
+    if (q.followUp) {
+      body += `
+        <div class="followup" id="followup-${i}" style="display:none;">
+          <div class="followup-title">${q.followUp.title}</div>
+          <div class="answer-wrap">
+            <textarea placeholder="${q.followUp.placeholder}"></textarea>
+            <button class="mic" title="Antwort diktieren" type="button">${micSvg}</button>
+          </div>
+          <div class="mic-hint"></div>
+        </div>
+      `;
+    }
+  }
+
+  el.innerHTML = `
+    <div class="topic-num">${String(i+1).padStart(2,"0")} / ${QUESTIONS.length}</div>
+    <h2>${q.title}</h2>
+    ${body}
+  `;
+  container.appendChild(el);
+
+  // Sprungliste
+  const jump = document.createElement("button");
+  jump.className = "jump";
+  jump.type = "button";
+  jump.textContent = i + 1;
+  jump.title = q.title;
+  jump.addEventListener("click", () => el.scrollIntoView({ block: "start" }));
+  jumpRow.appendChild(jump);
+
+  function isDone() {
+    return q.type === "text" ? !!state[i].note.trim() : state[i].value !== null;
+  }
+  function render() {
+    el.classList.toggle("done", isDone());
+    jump.classList.toggle("done-yes", isDone());
+  }
+
+  if (q.type === "text") {
+    const ta = el.querySelector(".answer-wrap textarea");
+    ta.value = state[i].note || "";
+    ta.addEventListener("input", () => { state[i].note = ta.value; saveState(); updateProgress(); });
+    setupMic(el.querySelector(".mic"), ta, el.querySelector(".mic-hint"), (text) => {
+      state[i].note = text; saveState(); updateProgress();
+    });
+  } else {
+    const btns = el.querySelectorAll(".scale-btn");
+    btns.forEach(b => {
+      b.addEventListener("click", () => {
+        const v = Number(b.dataset.v);
+        state[i].value = state[i].value === v ? null : v;
+        btns.forEach(x => x.classList.remove("sel"));
+        if (state[i].value !== null) {
+          b.classList.add("sel");
+          b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
+          if (navigator.vibrate) navigator.vibrate(12);
+        }
+        if (q.followUp) {
+          const fu = document.getElementById("followup-" + i);
+          fu.style.display = q.followUp.showWhen(state[i].value) ? "block" : "none";
+        }
+        render();
+        updateProgress();
+        saveState();
+      });
+      if (state[i].value === Number(b.dataset.v)) b.classList.add("sel");
+    });
+    if (q.followUp) {
+      const fu = document.getElementById("followup-" + i);
+      fu.style.display = q.followUp.showWhen(state[i].value) ? "block" : "none";
+      const fuTa = fu.querySelector("textarea");
+      fuTa.value = state[i].followUpNote || "";
+      fuTa.addEventListener("input", () => { state[i].followUpNote = fuTa.value; saveState(); });
+      setupMic(fu.querySelector(".mic"), fuTa, fu.querySelector(".mic-hint"), (text) => {
+        state[i].followUpNote = text; saveState();
+      });
+    }
+  }
+
+  render();
+});
+
+function updateProgress() {
+  const done = state.filter((s, i) => QUESTIONS[i].type === "text" ? !!s.note.trim() : s.value !== null).length;
+  document.getElementById("progressFill").style.width = (done/QUESTIONS.length*100)+"%";
+  document.getElementById("progressLabel").textContent = done+" / "+QUESTIONS.length;
+  const open = QUESTIONS.length - done;
+  document.getElementById("countRow").innerHTML =
+    `<span class="count-pill yes">${done} beantwortet</span>` +
+    (open ? `<span class="count-pill open">${open} offen</span>` : "");
+  const box = document.getElementById("summaryBox");
+  if (box.classList.contains("open")) box.textContent = buildSummary();
+}
+updateProgress();
+
+/* ---------- Diktierfunktion (echte Aufnahme + Groq-Whisper) ----------
+   Nicht mehr die Web Speech API (Chrome-only, schluckt Woerter bei
+   Sprechpausen), sondern MediaRecorder + Transkription ueber einen
+   oeffentlichen Proxy im Kundendashboard (/api/transcribe-public, geschuetzt
+   durch Origin-Sperre + Rate-Limit). Laeuft in jedem Browser inkl. iPhone
+   Safari. Gleiches Muster wie im Kundendashboard selbst (lib/dictation.tsx). */
+const TRANSCRIBE_URL = "https://app.melchiorsorg.com/api/transcribe-public";
+const MAX_AUFNAHME_MS = 5 * 60 * 1000;
+let activeRec = null;
+function setupMic(btn, ta, hint, onChange) {
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    btn.addEventListener("click", () => {
+      hint.textContent = "Diktieren wird von diesem Browser nicht unterstützt. Einfach tippen.";
+    });
+    return;
+  }
+
+  let rec = null;
+  let stopTimer = null;
+
+  function stopUI() {
+    btn.classList.remove("rec");
+    hint.textContent = "";
+    hint.classList.remove("recording");
+  }
+
+  async function start() {
+    if (activeRec) activeRec.stop();
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      hint.textContent = "Mikrofon-Zugriff nicht möglich. Bitte im Browser erlauben oder tippen.";
+      return;
+    }
+
+    const mime = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+      ? "audio/webm;codecs=opus"
+      : MediaRecorder.isTypeSupported("audio/mp4")
+        ? "audio/mp4"
+        : "";
+    rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+    activeRec = { stop: () => { try { rec.stop(); } catch(e){} } };
+    const chunks = [];
+
+    rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+    rec.onstop = async () => {
+      stream.getTracks().forEach((t) => t.stop());
+      if (stopTimer) clearTimeout(stopTimer);
+      btn.classList.remove("rec");
+      btn.classList.add("busy");
+      hint.textContent = "Wird in Text umgewandelt…";
+      hint.classList.remove("recording");
+
+      const typ = rec.mimeType || "audio/webm";
+      const blob = new Blob(chunks, { type: typ });
+      if (!blob.size) { btn.classList.remove("busy"); hint.textContent = ""; activeRec = null; return; }
+
+      try {
+        const fd = new FormData();
+        fd.append("file", blob, typ.includes("mp4") ? "aufnahme.m4a" : "aufnahme.webm");
+        const res = await fetch(TRANSCRIBE_URL, { method: "POST", body: fd });
+        const data = await res.json();
+        if (!res.ok || data.error) {
+          hint.textContent = "Umwandeln hat nicht geklappt. Versuch es nochmal oder tipp den Text.";
+        } else if (data.text && data.text.trim()) {
+          const text = (ta.value.trim() ? ta.value.trim() + " " : "") + data.text.trim();
+          ta.value = text;
+          onChange(text);
+          hint.textContent = "";
+        } else {
+          hint.textContent = "";
+        }
+      } catch (e) {
+        hint.textContent = "Umwandeln hat nicht geklappt. Versuch es nochmal oder tipp den Text.";
+      }
+      btn.classList.remove("busy");
+      activeRec = null;
+    };
+
+    rec.start();
+    btn.classList.add("rec");
+    hint.textContent = "Aufnahme läuft, zum Beenden nochmal aufs Mikrofon tippen.";
+    hint.classList.add("recording");
+    stopTimer = setTimeout(() => { try { rec.stop(); } catch(e){} }, MAX_AUFNAHME_MS);
+  }
+
+  btn.addEventListener("click", () => {
+    if (btn.classList.contains("busy")) return;
+    if (btn.classList.contains("rec")) {
+      if (stopTimer) clearTimeout(stopTimer);
+      try { rec && rec.stop(); } catch(e){}
+      return;
+    }
+    start();
+  });
+}
+
+/* ---------- Zusammenfassung + Versand ---------- */
+function buildSummary() {
+  let out = "NPS Feedback von Philip\n\n";
+  QUESTIONS.forEach((q, i) => {
+    const s = state[i];
+    out += `${i+1}. ${q.title}\n`;
+    if (q.type === "text") {
+      out += `   ${s.note.trim() || "(keine Antwort)"}\n\n`;
+    } else {
+      out += `   Bewertung: ${s.value !== null ? s.value + "/10" : "(keine Antwort)"}\n`;
+      if (q.followUp && q.followUp.showWhen(s.value) && s.followUpNote.trim()) {
+        out += `   ${q.followUp.title} ${s.followUpNote.trim()}\n`;
+      }
+      out += "\n";
+    }
+  });
+  return out.trim();
+}
+
+function toast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2400);
+}
+
+function checkOpen() {
+  const done = state.filter((s, i) => QUESTIONS[i].type === "text" ? !!s.note.trim() : s.value !== null).length;
+  const open = QUESTIONS.length - done;
+  if (open > 0 && !confirm(`Du hast noch ${open} Frage(n) ohne Antwort. Trotzdem senden?`)) return false;
+  return true;
+}
+
+document.getElementById("summaryToggle").addEventListener("click", () => {
+  const box = document.getElementById("summaryBox");
+  box.classList.toggle("open");
+  if (box.classList.contains("open")) {
+    box.textContent = buildSummary();
+    document.getElementById("summaryToggle").textContent = "Zusammenfassung ausblenden";
+  } else {
+    document.getElementById("summaryToggle").textContent = "Zusammenfassung ansehen";
+  }
+});
+
+function showThanks(sent) {
+  if (!sent) {
+    document.getElementById("thanksTitle").textContent = "Fertig, alles kopiert!";
+    document.getElementById("thanksText").textContent = "Jetzt nur noch in WhatsApp einfügen und an Melchior schicken. Danke dir!";
+  }
+  document.getElementById("submitMain").style.display = "none";
+  document.getElementById("thanksScreen").classList.add("show");
+  if (navigator.vibrate) navigator.vibrate([15, 60, 15]);
+}
+
+document.getElementById("sendBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  const btn = document.getElementById("sendBtn");
+  btn.disabled = true;
+  btn.textContent = "Wird gesendet...";
+  try {
+    const res = await fetch("https://formspree.io/f/" + FORMSPREE_ID, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ feedback: buildSummary() })
+    });
+    if (!res.ok) throw new Error("send failed");
+    showThanks(true);
+  } catch(e) {
+    // Fallback: kopieren und per WhatsApp schicken lassen
+    btn.disabled = false;
+    btn.textContent = "Antworten absenden";
+    try { await navigator.clipboard.writeText(buildSummary()); } catch(err) {}
+    toast("Senden hat nicht geklappt. Antworten sind kopiert: schick sie per WhatsApp.");
+  }
+});
+
+document.getElementById("copyBtn").addEventListener("click", async () => {
+  if (!checkOpen()) return;
+  await navigator.clipboard.writeText(buildSummary());
+  showThanks(false);
+});
+document.getElementById("copyAgain").addEventListener("click", async () => {
+  await navigator.clipboard.writeText(buildSummary());
+  toast("Kopiert");
+});
+</script>
+</body>
+</html>
